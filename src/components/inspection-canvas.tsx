@@ -95,37 +95,39 @@ export function InspectionCanvas({
 
   if (rejectCodes.length === 0) {
     return (
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+      <div className="rounded-xl border border-warning/20 bg-warning/10 p-4 text-sm text-warning">
         Add reject codes before recording rejects.
       </div>
     );
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-      <div className="space-y-4">
+    <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
+      <div className="space-y-5">
         <div>
-          <p className="mb-2 text-sm font-medium text-zinc-700">Reject code</p>
-          <div className="space-y-2">
+          <p className="pi-label mb-2.5">Reject code</p>
+          <div className="space-y-1.5">
             {rejectCodes.map((code) => (
               <button
                 key={code.id}
                 type="button"
                 disabled={readOnly}
                 onClick={() => setSelectedCodeId(code.id)}
-                className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left text-sm transition ${
+                className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left text-sm transition ${
                   selectedCodeId === code.id
-                    ? "border-zinc-900 bg-zinc-50"
-                    : "border-zinc-200 hover:border-zinc-300"
+                    ? "border-border-strong bg-white/[0.05]"
+                    : "border-transparent bg-transparent hover:bg-white/[0.03]"
                 }`}
               >
                 <span
-                  className="h-3 w-3 rounded-full"
+                  className="h-2.5 w-2.5 rounded-full ring-2 ring-white/10"
                   style={{ backgroundColor: code.color }}
                 />
                 <span>
-                  <span className="font-medium">{code.code}</span>
-                  <span className="block text-xs text-zinc-500">
+                  <span className="pi-mono font-medium text-foreground">
+                    {code.code}
+                  </span>
+                  <span className="block text-xs text-muted">
                     {code.description}
                   </span>
                 </span>
@@ -136,25 +138,25 @@ export function InspectionCanvas({
 
         {!readOnly && (
           <label className="block space-y-1.5">
-            <span className="text-sm font-medium text-zinc-700">Notes</span>
+            <span className="pi-label">Notes</span>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+              className="pi-input resize-none"
               placeholder="Optional notes for next reject"
             />
           </label>
         )}
 
         {!readOnly && (
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs leading-relaxed text-muted-dim">
             Click on the part image to mark a reject at that location.
           </p>
         )}
 
         {message && (
-          <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+          <p className="rounded-lg border border-success/20 bg-success/10 px-3 py-2 text-sm text-success">
             {message}
           </p>
         )}
@@ -162,7 +164,7 @@ export function InspectionCanvas({
 
       <div className="space-y-4">
         <div
-          className={`relative overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 ${
+          className={`relative overflow-hidden rounded-xl border border-border bg-[#0c0d0f] ${
             readOnly ? "cursor-default" : "cursor-crosshair"
           }`}
           onClick={handleClick}
@@ -192,7 +194,7 @@ export function InspectionCanvas({
               }}
             >
               <span
-                className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-white text-[10px] font-bold text-white shadow-md"
+                className="pi-mono flex h-7 w-7 items-center justify-center rounded-full border border-white/40 text-[9px] font-semibold text-white shadow-[0_0_0_3px_rgba(0,0,0,0.45)]"
                 style={{ backgroundColor: reject.rejectCode.color }}
               >
                 {reject.rejectCode.code.slice(0, 3)}
@@ -202,37 +204,42 @@ export function InspectionCanvas({
         </div>
 
         {rejects.length > 0 && (
-          <div className="rounded-xl border border-zinc-200 bg-white p-4">
-            <h3 className="mb-3 text-sm font-medium text-zinc-900">
-              Rejects on this unit ({rejects.length})
+          <div className="pi-card p-4">
+            <h3 className="pi-label mb-3">
+              Rejects on this unit · {rejects.length}
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5">
               {rejects.map((reject) => (
                 <li
                   key={reject.id}
-                  className="flex items-start gap-3 rounded-lg bg-zinc-50 px-3 py-2 text-sm"
+                  className="flex items-start gap-3 rounded-lg bg-white/[0.03] px-3 py-2.5 text-sm"
                 >
                   <span
-                    className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full"
+                    className="mt-1.5 h-2 w-2 shrink-0 rounded-full"
                     style={{ backgroundColor: reject.rejectCode.color }}
                   />
                   <div>
-                    <p className="font-medium text-zinc-900">
-                      {reject.rejectCode.code} — {reject.rejectCode.description}
+                    <p className="text-foreground">
+                      <span className="pi-mono font-medium">
+                        {reject.rejectCode.code}
+                      </span>
+                      <span className="text-muted">
+                        {" "}
+                        — {reject.rejectCode.description}
+                      </span>
                     </p>
-                    <p className="text-xs text-zinc-500">
-                      Location: {(reject.x * 100).toFixed(1)}%,{" "}
-                      {(reject.y * 100).toFixed(1)}%
+                    <p className="pi-mono mt-0.5 text-[11px] text-muted-dim">
+                      {(reject.x * 100).toFixed(1)}%, {(reject.y * 100).toFixed(1)}%
                     </p>
                     {reject.notes && (
-                      <p className="mt-1 text-xs text-zinc-600">{reject.notes}</p>
+                      <p className="mt-1 text-xs text-muted">{reject.notes}</p>
                     )}
                   </div>
                 </li>
               ))}
             </ul>
             {!readOnly && (
-              <p className="mt-3 text-xs text-zinc-500">
+              <p className="mt-3 text-xs text-muted-dim">
                 Click a marker on the image to remove that reject.
               </p>
             )}

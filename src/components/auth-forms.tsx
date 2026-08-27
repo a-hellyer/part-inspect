@@ -23,14 +23,14 @@ function AuthForm({
     <form action={formAction} className="space-y-4">
       {children}
       {state.error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="rounded-lg border border-danger/20 bg-danger/10 px-3 py-2 text-sm text-danger">
           {state.error}
         </p>
       )}
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50"
+        className="pi-btn pi-btn-primary w-full py-2.5"
       >
         {pending ? "Please wait..." : submitLabel}
       </button>
@@ -51,12 +51,12 @@ function Field({
 }) {
   return (
     <label className="block space-y-1.5">
-      <span className="text-sm font-medium text-zinc-700">{label}</span>
+      <span className="pi-label">{label}</span>
       <input
         name={name}
         type={type}
         required={required}
-        className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
+        className="pi-input"
       />
     </label>
   );
@@ -78,9 +78,9 @@ export function RegisterForm() {
       <Field label="Your name" name="name" required />
       <Field label="Email" name="email" type="email" required />
       <Field label="Password" name="password" type="password" required />
-      <p className="text-xs text-zinc-500">
+      <p className="text-xs text-muted">
         Already have an account?{" "}
-        <Link href="/login" className="text-zinc-900 underline">
+        <Link href="/login" className="text-foreground underline decoration-border-strong underline-offset-4">
           Sign in
         </Link>
       </p>

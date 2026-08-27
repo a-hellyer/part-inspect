@@ -20,41 +20,41 @@ export default async function BatchesPage() {
     <div className="mx-auto max-w-6xl px-6 py-10">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-zinc-900">Batches</h1>
-          <p className="mt-1 text-sm text-zinc-600">
+          <p className="pi-label">Production</p>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
+            Batches
+          </h1>
+          <p className="mt-1 text-sm text-muted">
             Production runs where each unit starts as good until rejected.
           </p>
         </div>
-        <Link
-          href="/batches/new"
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
-        >
+        <Link href="/batches/new" className="pi-btn pi-btn-primary">
           New batch
         </Link>
       </div>
 
       {batches.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-zinc-300 bg-white p-12 text-center">
-          <p className="text-sm text-zinc-500">No batches yet.</p>
+        <div className="pi-card border-dashed p-12 text-center">
+          <p className="text-sm text-muted">No batches yet.</p>
           <Link
             href="/batches/new"
-            className="mt-4 inline-block text-sm font-medium text-zinc-900 underline"
+            className="mt-3 inline-block text-sm text-foreground underline decoration-border-strong underline-offset-4"
           >
             Create your first batch
           </Link>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
-          <table className="min-w-full text-sm">
-            <thead className="bg-zinc-50 text-left text-zinc-500">
+        <div className="pi-card overflow-hidden">
+          <table className="pi-table">
+            <thead>
               <tr>
-                <th className="px-4 py-3 font-medium">Batch</th>
-                <th className="px-4 py-3 font-medium">Part</th>
-                <th className="px-4 py-3 font-medium">Quantity</th>
-                <th className="px-4 py-3 font-medium">Rejected</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Created</th>
-                <th className="px-4 py-3 font-medium"></th>
+                <th>Batch</th>
+                <th>Part</th>
+                <th>Quantity</th>
+                <th>Rejected</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -63,37 +63,36 @@ export default async function BatchesPage() {
                   (u) => u.status === "REJECTED",
                 ).length;
                 return (
-                  <tr key={batch.id} className="border-t border-zinc-100">
-                    <td className="px-4 py-3 font-medium text-zinc-900">
+                  <tr key={batch.id} className="hover:bg-white/[0.02]">
+                    <td className="!text-foreground font-medium">
                       {batch.name}
                     </td>
-                    <td className="px-4 py-3 text-zinc-600">
-                      {batch.part.name}
+                    <td>{batch.part.name}</td>
+                    <td className="pi-mono">{batch.quantity}</td>
+                    <td className="pi-mono">
+                      {rejected}{" "}
+                      <span className="text-muted-dim">
+                        ({((rejected / batch.quantity) * 100).toFixed(0)}%)
+                      </span>
                     </td>
-                    <td className="px-4 py-3 text-zinc-600">
-                      {batch.quantity}
-                    </td>
-                    <td className="px-4 py-3 text-zinc-600">
-                      {rejected} ({((rejected / batch.quantity) * 100).toFixed(0)}%)
-                    </td>
-                    <td className="px-4 py-3">
+                    <td>
                       <span
-                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                        className={
                           batch.status === "OPEN"
-                            ? "bg-emerald-50 text-emerald-700"
-                            : "bg-zinc-100 text-zinc-600"
-                        }`}
+                            ? "pi-badge pi-badge-open"
+                            : "pi-badge pi-badge-closed"
+                        }
                       >
                         {batch.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-zinc-500">
+                    <td className="pi-mono text-muted-dim">
                       {batch.createdAt.toLocaleDateString()}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="text-right">
                       <Link
                         href={`/inspect/${batch.id}`}
-                        className="font-medium text-zinc-900 underline"
+                        className="text-[13px] text-foreground underline decoration-border-strong underline-offset-4"
                       >
                         Inspect
                       </Link>

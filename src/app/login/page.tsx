@@ -9,17 +9,23 @@ export default async function LoginPage() {
 
   return (
     <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-md items-center px-6 py-12">
-      <div className="w-full rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
-        <h1 className="text-2xl font-semibold text-zinc-900">Sign in</h1>
-        <p className="mt-2 text-sm text-zinc-600">
+      <div className="pi-card w-full p-8">
+        <p className="pi-label">Account</p>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+          Sign in
+        </h1>
+        <p className="mt-2 text-sm text-muted">
           Access your company&apos;s inspection workspace.
         </p>
-        <div className="mt-6">
+        <div className="mt-7">
           <LoginForm />
         </div>
-        <p className="mt-6 text-center text-sm text-zinc-500">
+        <p className="mt-6 text-center text-sm text-muted">
           No account?{" "}
-          <Link href="/register" className="text-zinc-900 underline">
+          <Link
+            href="/register"
+            className="text-foreground underline decoration-border-strong underline-offset-4"
+          >
             Register your company
           </Link>
         </p>

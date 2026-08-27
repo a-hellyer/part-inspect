@@ -34,75 +34,74 @@ export default async function DashboardPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-zinc-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-zinc-600">
-          Welcome back, {session.name} — {session.companyName}
+        <p className="pi-label">Overview</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
+          Dashboard
+        </h1>
+        <p className="mt-1 text-sm text-muted">
+          Welcome back, {session.name}{" "}
+          <span className="text-muted-dim">·</span>{" "}
+          <span className="pi-mono text-muted-dim">{session.companyName}</span>
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: "Parts", value: partsCount },
-          { label: "Total batches", value: batchesCount },
-          { label: "Open batches", value: openBatches },
+          { label: "Parts", value: String(partsCount) },
+          { label: "Total batches", value: String(batchesCount) },
+          { label: "Open batches", value: String(openBatches) },
           {
-            label: "Reject rate (recent)",
+            label: "Reject rate",
             value:
               totalUnits > 0
                 ? `${((rejectedUnits / totalUnits) * 100).toFixed(1)}%`
                 : "—",
           },
         ].map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm"
-          >
-            <p className="text-sm text-zinc-500">{stat.label}</p>
-            <p className="mt-1 text-3xl font-semibold text-zinc-900">
+          <div key={stat.label} className="pi-card p-4">
+            <p className="pi-label">{stat.label}</p>
+            <p className="pi-mono mt-2 text-3xl font-medium tracking-tight text-foreground">
               {stat.value}
             </p>
           </div>
         ))}
       </div>
 
-      <div className="mt-10 flex flex-wrap gap-3">
-        <Link
-          href="/parts/new"
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
-        >
+      <div className="mt-8 flex flex-wrap gap-2">
+        <Link href="/parts/new" className="pi-btn pi-btn-primary">
           Add part
         </Link>
-        <Link
-          href="/batches/new"
-          className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
-        >
+        <Link href="/batches/new" className="pi-btn pi-btn-ghost">
           New batch
         </Link>
-        <Link
-          href="/reject-codes"
-          className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
-        >
+        <Link href="/reject-codes" className="pi-btn pi-btn-ghost">
           Manage reject codes
         </Link>
       </div>
 
       <section className="mt-10">
-        <h2 className="text-lg font-semibold text-zinc-900">Recent batches</h2>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-[15px] font-medium text-foreground">
+            Recent batches
+          </h2>
+        </div>
         {recentBatches.length === 0 ? (
-          <p className="mt-4 text-sm text-zinc-500">
-            No batches yet. Create a part, then start your first batch.
-          </p>
+          <div className="pi-card p-8 text-center">
+            <p className="text-sm text-muted">
+              No batches yet. Create a part, then start your first batch.
+            </p>
+          </div>
         ) : (
-          <div className="mt-4 overflow-hidden rounded-2xl border border-zinc-200 bg-white">
-            <table className="min-w-full text-sm">
-              <thead className="bg-zinc-50 text-left text-zinc-500">
+          <div className="pi-card overflow-hidden">
+            <table className="pi-table">
+              <thead>
                 <tr>
-                  <th className="px-4 py-3 font-medium">Batch</th>
-                  <th className="px-4 py-3 font-medium">Part</th>
-                  <th className="px-4 py-3 font-medium">Units</th>
-                  <th className="px-4 py-3 font-medium">Rejected</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium"></th>
+                  <th>Batch</th>
+                  <th>Part</th>
+                  <th>Units</th>
+                  <th>Rejected</th>
+                  <th>Status</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -111,32 +110,28 @@ export default async function DashboardPage() {
                     (u) => u.status === "REJECTED",
                   ).length;
                   return (
-                    <tr key={batch.id} className="border-t border-zinc-100">
-                      <td className="px-4 py-3 font-medium text-zinc-900">
+                    <tr key={batch.id} className="hover:bg-white/[0.02]">
+                      <td className="!text-foreground font-medium">
                         {batch.name}
                       </td>
-                      <td className="px-4 py-3 text-zinc-600">
-                        {batch.part.name}
-                      </td>
-                      <td className="px-4 py-3 text-zinc-600">
-                        {batch.quantity}
-                      </td>
-                      <td className="px-4 py-3 text-zinc-600">{rejected}</td>
-                      <td className="px-4 py-3">
+                      <td>{batch.part.name}</td>
+                      <td className="pi-mono">{batch.quantity}</td>
+                      <td className="pi-mono">{rejected}</td>
+                      <td>
                         <span
-                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                          className={
                             batch.status === "OPEN"
-                              ? "bg-emerald-50 text-emerald-700"
-                              : "bg-zinc-100 text-zinc-600"
-                          }`}
+                              ? "pi-badge pi-badge-open"
+                              : "pi-badge pi-badge-closed"
+                          }
                         >
                           {batch.status}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="text-right">
                         <Link
                           href={`/inspect/${batch.id}`}
-                          className="text-zinc-900 underline"
+                          className="text-[13px] text-foreground underline decoration-border-strong underline-offset-4"
                         >
                           Inspect
                         </Link>

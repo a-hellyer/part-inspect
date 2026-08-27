@@ -9,19 +9,23 @@ export default async function RegisterPage() {
 
   return (
     <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-md items-center px-6 py-12">
-      <div className="w-full rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
-        <h1 className="text-2xl font-semibold text-zinc-900">
+      <div className="pi-card w-full p-8">
+        <p className="pi-label">Get started</p>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
           Register your company
         </h1>
-        <p className="mt-2 text-sm text-zinc-600">
+        <p className="mt-2 text-sm text-muted">
           Create an account and start tracking part rejects in minutes.
         </p>
-        <div className="mt-6">
+        <div className="mt-7">
           <RegisterForm />
         </div>
-        <p className="mt-6 text-center text-sm text-zinc-500">
+        <p className="mt-6 text-center text-sm text-muted">
           Already registered?{" "}
-          <Link href="/login" className="text-zinc-900 underline">
+          <Link
+            href="/login"
+            className="text-foreground underline decoration-border-strong underline-offset-4"
+          >
             Sign in
           </Link>
         </p>

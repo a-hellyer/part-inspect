@@ -16,12 +16,12 @@ export default async function NewBatchPage() {
   if (parts.length === 0) {
     return (
       <div className="mx-auto max-w-xl px-6 py-10">
-        <p className="text-sm text-zinc-600">
+        <p className="text-sm text-muted">
           You need at least one part before creating a batch.
         </p>
         <Link
           href="/parts/new"
-          className="mt-4 inline-block text-sm font-medium text-zinc-900 underline"
+          className="mt-4 inline-block text-sm text-foreground underline decoration-border-strong underline-offset-4"
         >
           Add a part first
         </Link>
@@ -33,24 +33,23 @@ export default async function NewBatchPage() {
     <div className="mx-auto max-w-xl px-6 py-10">
       <Link
         href="/batches"
-        className="text-sm text-zinc-500 hover:text-zinc-700"
+        className="text-[13px] text-muted transition hover:text-foreground"
       >
         ← Back to batches
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-zinc-900">New batch</h1>
-      <p className="mt-1 text-sm text-zinc-600">
+      <p className="pi-label mt-6">New</p>
+      <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
+        New batch
+      </h1>
+      <p className="mt-1 text-sm text-muted">
         All units in the batch are created as good. Rejects are recorded during
         inspection.
       </p>
 
-      <form action={createBatchAction} className="mt-8 space-y-5">
+      <form action={createBatchAction} className="pi-card mt-8 space-y-5 p-6">
         <label className="block space-y-1.5">
-          <span className="text-sm font-medium text-zinc-700">Part</span>
-          <select
-            name="partId"
-            required
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
-          >
+          <span className="pi-label">Part</span>
+          <select name="partId" required className="pi-input">
             {parts.map((part) => (
               <option key={part.id} value={part.id}>
                 {part.name}
@@ -60,17 +59,17 @@ export default async function NewBatchPage() {
         </label>
 
         <label className="block space-y-1.5">
-          <span className="text-sm font-medium text-zinc-700">Batch name</span>
+          <span className="pi-label">Batch name</span>
           <input
             name="name"
             required
             placeholder="e.g. Lot 2024-0815-A"
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+            className="pi-input pi-mono"
           />
         </label>
 
         <label className="block space-y-1.5">
-          <span className="text-sm font-medium text-zinc-700">Quantity</span>
+          <span className="pi-label">Quantity</span>
           <input
             name="quantity"
             type="number"
@@ -78,14 +77,11 @@ export default async function NewBatchPage() {
             max={10000}
             defaultValue={10}
             required
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+            className="pi-input pi-mono"
           />
         </label>
 
-        <button
-          type="submit"
-          className="rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800"
-        >
+        <button type="submit" className="pi-btn pi-btn-primary">
           Create batch
         </button>
       </form>

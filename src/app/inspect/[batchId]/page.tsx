@@ -43,7 +43,7 @@ export default async function InspectPage({ params, searchParams }: PageProps) {
   if (!selectedUnit) {
     return (
       <div className="mx-auto max-w-4xl px-6 py-10">
-        <p className="text-sm text-zinc-600">This batch has no units.</p>
+        <p className="text-sm text-muted">This batch has no units.</p>
       </div>
     );
   }
@@ -57,18 +57,23 @@ export default async function InspectPage({ params, searchParams }: PageProps) {
         <div>
           <Link
             href="/batches"
-            className="text-sm text-zinc-500 hover:text-zinc-700"
+            className="text-[13px] text-muted transition hover:text-foreground"
           >
             ← Back to batches
           </Link>
-          <h1 className="mt-2 text-2xl font-semibold text-zinc-900">
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
             {batch.name}
           </h1>
-          <p className="mt-1 text-sm text-zinc-600">
-            Part: {batch.part.name} · {batch.quantity} units ·{" "}
+          <p className="mt-1 text-sm text-muted">
+            Part: {batch.part.name}{" "}
+            <span className="text-muted-dim">·</span>{" "}
+            <span className="pi-mono">{batch.quantity} units</span>{" "}
+            <span className="text-muted-dim">·</span>{" "}
             <span
               className={
-                batch.status === "OPEN" ? "text-emerald-600" : "text-zinc-500"
+                batch.status === "OPEN"
+                  ? "pi-badge pi-badge-open"
+                  : "pi-badge pi-badge-closed"
               }
             >
               {batch.status}
@@ -77,17 +82,14 @@ export default async function InspectPage({ params, searchParams }: PageProps) {
         </div>
         {batch.status === "OPEN" && (
           <form action={closeBatchAction.bind(null, batch.id)}>
-            <button
-              type="submit"
-              className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
-            >
+            <button type="submit" className="pi-btn pi-btn-ghost">
               Close batch
             </button>
           </form>
         )}
       </div>
 
-      <div className="mb-6 flex flex-wrap gap-2">
+      <div className="mb-6 flex flex-wrap gap-1.5">
         {batch.units.map((unit) => {
           const isActive = unit.id === selectedUnit.id;
           const rejectCount = unit.rejects.length;
@@ -95,12 +97,12 @@ export default async function InspectPage({ params, searchParams }: PageProps) {
             <Link
               key={unit.id}
               href={`/inspect/${batch.id}?unit=${unit.id}`}
-              className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition ${
+              className={`pi-mono rounded-md border px-2.5 py-1.5 text-xs font-medium transition ${
                 isActive
-                  ? "border-zinc-900 bg-zinc-900 text-white"
+                  ? "border-border-strong bg-accent text-accent-fg"
                   : unit.status === "REJECTED"
-                    ? "border-red-200 bg-red-50 text-red-700 hover:border-red-300"
-                    : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300"
+                    ? "border-danger/25 bg-danger/10 text-danger hover:border-danger/40"
+                    : "border-border bg-transparent text-muted hover:border-border-strong hover:text-foreground"
               }`}
             >
               #{unit.serialNumber}
@@ -111,10 +113,10 @@ export default async function InspectPage({ params, searchParams }: PageProps) {
       </div>
 
       {!imageUrl ? (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-800">
+        <div className="rounded-xl border border-warning/20 bg-warning/10 p-6 text-sm text-warning">
           This part has no reference image. Upload an image on the part record
           to enable point-and-click inspection.
-          <Link href="/parts" className="ml-1 underline">
+          <Link href="/parts" className="ml-1 underline underline-offset-4">
             Go to parts
           </Link>
         </div>

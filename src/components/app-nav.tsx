@@ -7,22 +7,16 @@ export async function AppNav() {
 
   if (!session) {
     return (
-      <header className="border-b border-zinc-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link href="/" className="text-lg font-semibold text-zinc-900">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
+          <Link href="/" className="pi-mono text-sm font-semibold tracking-tight text-foreground">
             PartInspect
           </Link>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="rounded-lg px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100"
-            >
+          <div className="flex items-center gap-2">
+            <Link href="/login" className="pi-btn pi-btn-ghost">
               Sign in
             </Link>
-            <Link
-              href="/register"
-              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
-            >
+            <Link href="/register" className="pi-btn pi-btn-primary">
               Get started
             </Link>
           </div>
@@ -39,18 +33,21 @@ export async function AppNav() {
   ];
 
   return (
-    <header className="border-b border-zinc-200 bg-white">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
         <div className="flex items-center gap-8">
-          <Link href="/dashboard" className="text-lg font-semibold text-zinc-900">
+          <Link
+            href="/dashboard"
+            className="pi-mono text-sm font-semibold tracking-tight text-foreground"
+          >
             PartInspect
           </Link>
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="hidden items-center gap-0.5 md:flex">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-lg px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+                className="rounded-md px-3 py-1.5 text-[13px] text-muted transition hover:bg-white/[0.04] hover:text-foreground"
               >
                 {link.label}
               </Link>
@@ -59,14 +56,11 @@ export async function AppNav() {
         </div>
         <div className="flex items-center gap-4">
           <div className="hidden text-right sm:block">
-            <p className="text-sm font-medium text-zinc-900">{session.name}</p>
-            <p className="text-xs text-zinc-500">{session.companyName}</p>
+            <p className="text-[13px] font-medium text-foreground">{session.name}</p>
+            <p className="pi-mono text-[11px] text-muted-dim">{session.companyName}</p>
           </div>
           <form action={logoutAction}>
-            <button
-              type="submit"
-              className="rounded-lg px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100"
-            >
+            <button type="submit" className="pi-btn pi-btn-ghost">
               Sign out
             </button>
           </form>
