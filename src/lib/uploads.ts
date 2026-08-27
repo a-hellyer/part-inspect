@@ -1,8 +1,5 @@
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
+import { put } from "@vercel/blob";
 import { v4 as uuidv4 } from "uuid";
-
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 
 const ALLOWED_IMAGE_TYPES = new Set([
   "image/jpeg",
@@ -44,21 +41,31 @@ export async function saveUpload(
   const extensions =
     kind === "image" ? IMAGE_EXTENSIONS : MODEL_EXTENSIONS;
 
-  if (!allowed.has(file.type)) {
-    throw new Error(`Unsupported ${kind} file type: ${file.type}`);
+  if (!allowed.has(file.type) && kind === "image") {
+    throw new Error(`Unsupported ${kind} file type: ${file.type || "unknown"}`);
+  }
+
+  // STL uploads often come through as empty/octet-stream; allow by extension too
+  if (kind === "model" && !allowed.has(file.type)) {
+    const name = file.name.toLowerCase();
+    if (!name.endsWith(".glb") && !name.endsWith(".gltf") && !name.endsWith(".stl")) {
+      throw new Error(`Unsupported model file type: ${file.type || file.name}`);
+    }
   }
 
   const ext =
     extensions[file.type] ??
-    path.extname(file.name) ??
-    (kind === "image" ? ".jpg" : ".glb");
+    (file.name.includes(".")
+      ? `.${file.name.split(".").pop()}`
+      : kind === "image"
+        ? ".jpg"
+        : ".glb");
 
-  await mkdir(path.join(UPLOAD_DIR, companyId), { recursive: true });
+  const filename = `${companyId}/${uuidv4()}${ext}`;
+  const blob = await put(filename, file, {
+    access: "public",
+    contentType: file.type || undefined,
+  });
 
-  const filename = `${uuidv4()}${ext}`;
-  const filepath = path.join(UPLOAD_DIR, companyId, filename);
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(filepath, buffer);
-
-  return `/uploads/${companyId}/${filename}`;
+  return blob.url;
 }
