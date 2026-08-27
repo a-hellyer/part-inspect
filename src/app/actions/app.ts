@@ -12,13 +12,30 @@ import {
   rejectSchema,
 } from "@/lib/validations";
 
+export type ActionState = {
+  error?: string;
+};
+
 async function requireCompanySession() {
   const session = await getSession();
   if (!session) redirect("/login");
   return session;
 }
 
-export async function createPartAction(formData: FormData): Promise<void> {
+function errorMessage(error: unknown, fallback: string) {
+  if (error instanceof Error && error.message) {
+    if (/body exceeded|too large|413/i.test(error.message)) {
+      return "That photo is too large to upload. Try a smaller JPEG.";
+    }
+    return error.message;
+  }
+  return fallback;
+}
+
+export async function createPartAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
   const session = await requireCompanySession();
 
   const parsed = partSchema.safeParse({
@@ -27,38 +44,53 @@ export async function createPartAction(formData: FormData): Promise<void> {
   });
 
   if (!parsed.success) {
-    throw new Error(parsed.error.issues[0]?.message ?? "Invalid input");
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
 
   let imageUrl: string | undefined;
   let modelUrl: string | undefined;
   let modelType = "IMAGE";
 
-  const imageFile = formData.get("image") as File | null;
-  if (imageFile && imageFile.size > 0) {
-    imageUrl = await saveUpload(imageFile, "image", session.companyId);
-  }
+  const imageFile = formData.get("image");
+  const modelFile = formData.get("model");
 
-  const modelFile = formData.get("model") as File | null;
-  if (modelFile && modelFile.size > 0) {
-    modelUrl = await saveUpload(modelFile, "model", session.companyId);
-    modelType = "MODEL_3D";
+  try {
+    if (imageFile instanceof File && imageFile.size > 0) {
+      imageUrl = await saveUpload(imageFile, "image", session.companyId);
+    } else if (imageFile instanceof File && imageFile.name) {
+      return {
+        error: "The photo didn't attach correctly. Try choosing it again.",
+      };
+    }
+
+    if (modelFile instanceof File && modelFile.size > 0) {
+      modelUrl = await saveUpload(modelFile, "model", session.companyId);
+      modelType = "MODEL_3D";
+    }
+  } catch (error) {
+    return { error: errorMessage(error, "Failed to upload file") };
   }
 
   if (!imageUrl && !modelUrl) {
-    throw new Error("Upload at least an image or 3D model");
+    return { error: "Upload at least an image or 3D model" };
   }
 
-  await prisma.part.create({
-    data: {
-      companyId: session.companyId,
-      name: parsed.data.name,
-      description: parsed.data.description,
-      imageUrl,
-      modelUrl,
-      modelType,
-    },
-  });
+  try {
+    await prisma.part.create({
+      data: {
+        companyId: session.companyId,
+        name: parsed.data.name,
+        description: parsed.data.description,
+        imageUrl,
+        modelUrl,
+        modelType,
+      },
+    });
+  } catch (error) {
+    return {
+      error: errorMessage(error, "Couldn't save the part. Please try again."),
+    };
+  }
 
   revalidatePath("/parts");
   redirect("/parts");
