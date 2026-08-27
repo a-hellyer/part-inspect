@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Company {
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  users       User[]
+  parts       Part[]
+  rejectCodes RejectCode[]
+  batches     Batch[]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("ADMIN")
+  companyId    String
+  company      Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  rejects      Reject[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Part {
+  id          String   @id @default(cuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  imageUrl    String?
+  modelUrl    String?
+  modelType   String   @default("IMAGE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  batches     Batch[]
+}
+
+model RejectCode {
+  id          String   @id @default(cuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  code        String
+  description String
+  color       String   @default("#ef4444")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  rejects     Reject[]
+
+  @@unique([companyId, code])
+}
+
+model Batch {
+  id        String     @id @default(cuid())
+  companyId String
+  company   Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  partId    String
+  part      Part       @relation(fields: [partId], references: [id], onDelete: Cascade)
+  name      String
+  quantity  Int
+  status    String     @default("OPEN")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  units     PartUnit[]
+}
+
+model PartUnit {
+  id           String   @id @default(cuid())
+  batchId      String
+  batch        Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  serialNumber Int
+  status       String   @default("GOOD")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  rejects      Reject[]
+
+  @@unique([batchId, serialNumber])
+}
+
+model Reject {
+  id           String     @id @default(cuid())
+  partUnitId   String
+  partUnit     PartUnit   @relation(fields: [partUnitId], references: [id], onDelete: Cascade)
+  rejectCodeId String
+  rejectCode   RejectCode @relation(fields: [rejectCodeId], references: [id], onDelete: Restrict)
+  x            Float
+  y            Float
+  notes        String?
+  createdById  String
+  createdBy    User       @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt    DateTime   @default(now())
+}
